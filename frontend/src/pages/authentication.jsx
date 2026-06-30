@@ -67,48 +67,20 @@ export default function Authentication() {
 
 
     return (
+        <div className="authlandingPage">
         <ThemeProvider theme={defaultTheme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
-                <CssBaseline />
-                <Grid
-                    item
-                    xs={false}
-                    sm={4}
-                    md={7}
-                    sx={{
-                        backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundColor: (t) =>
-                            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                />
-                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-                    <Box
-                        sx={{
-                            my: 8,
-                            mx: 4,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                            <LockOutlinedIcon />
-                        </Avatar>
-
-
-                        <div>
-                            <Button variant={formState === 0 ? "contained" : ""} onClick={() => { setFormState(0) }}>
+                    <div>
+                        <div className="btn-for-sign">
+                            <Button className = "btn-signin"variant={formState === 0 ? "contained" : ""} onClick={() => { setFormState(0) }}>
                                 Sign In
                             </Button>
-                            <Button variant={formState === 1 ? "contained" : ""} onClick={() => { setFormState(1) }}>
+                            <Button  className = "btn-for-signup"variant={formState === 1 ? "contained" : ""} onClick={() => { setFormState(1) }}>
                                 Sign Up
                             </Button>
                         </div>
-
-                        <Box component="form" noValidate sx={{ mt: 1 }}>
+                        <div className="auth-system">
+                        <Box className="inbodx" component="form" noValidate sx={{ mt: 1 }}>
                             {formState === 1 ? <TextField
                                 margin="normal"
                                 required
@@ -120,7 +92,6 @@ export default function Authentication() {
                                 autoFocus
                                 onChange={(e) => setName(e.target.value)}
                             /> : <></>}
-
                             <TextField
                                 margin="normal"
                                 required
@@ -131,9 +102,8 @@ export default function Authentication() {
                                 value={username}
                                 autoFocus
                                 onChange={(e) => setUsername(e.target.value)}
-
                             />
-                            <TextField
+                            <TextField 
                                 margin="normal"
                                 required
                                 fullWidth
@@ -142,13 +112,10 @@ export default function Authentication() {
                                 value={password}
                                 type="password"
                                 onChange={(e) => setPassword(e.target.value)}
-
                                 id="password"
                             />
-
                             <p style={{ color: "red" }}>{error}</p>
-
-                            <Button
+                            <Button className="btn-submit"
                                 type="button"
                                 fullWidth
                                 variant="contained"
@@ -157,12 +124,10 @@ export default function Authentication() {
                             >
                                 {formState === 0 ? "Login " : "Register"}
                             </Button>
-
                         </Box>
-                    </Box>
-                </Grid>
+                    </div>
+                </div>
             </Grid>
-
             <Snackbar
 
                 open={open}
@@ -171,5 +136,6 @@ export default function Authentication() {
             />
 
         </ThemeProvider>
+        </div>
     );
 }

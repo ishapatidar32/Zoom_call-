@@ -1,6 +1,7 @@
 import React from 'react'
 import "../App.css"
 import { Link, useNavigate } from 'react-router-dom'
+import {  Video } from 'lucide-react';
 export default function LandingPage() {
 
 
@@ -8,21 +9,25 @@ export default function LandingPage() {
 
     return (
         <div className='landingPageContainer'>
-            <nav>
-                <div className='navHeader'>
-                    <h2>Apna Video Call</h2>
-                </div>
+            {/*Navigation */}
+            <nav className='navbar'>
+                <div className="nav-logo">
+              <div className="logo-icon">
+                <Video className="w-5 h-5 text-white" />
+              </div>
+              <span className="logo-text">
+                StreamSync
+              </span>
+               </div>
                 <div className='navlist'>
                     <p onClick={() => {
                         router("/aljk23")
                     }}>Join as Guest</p>
                     <p onClick={() => {
                         router("/auth")
-
                     }}>Register</p>
-                    <div onClick={() => {
+                    <div className="nav-btn-login" onClick={() => {
                         router("/auth")
-
                     }} role='button'>
                         <p>Login</p>
                     </div>
@@ -31,23 +36,13 @@ export default function LandingPage() {
 
 
             <div className="landingMainContainer">
-                <div>
-                    <h1><span style={{ color: "#FF9839" }}>Connect</span> with your loved Ones</h1>
-
-                    <p>Cover a distance by Apna Video Call</p>
-                    <div role='button'>
-                        <Link to={"/auth"}>Get Started</Link>
-                    </div>
-                </div>
-                <div>
-
-                    <img src="/mobile.png" alt="" />
-
+                
+                <div className="landing-content">
+                    <h1 className="landing-title"><span className="title-highlight" style={{ color: "#FF9839" }}>Connect</span> with your loved Ones</h1>
+                    <p className="landing-subtitle">Crystal clear video calls , no downloads needed</p>
+                    <button className='cat-button' onClick={()=> router("/auth")}>Get Started </button>
                 </div>
             </div>
-
-
-
         </div>
     )
 }
