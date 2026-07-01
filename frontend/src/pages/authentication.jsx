@@ -1,141 +1,158 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { AuthContext } from '../contexts/AuthContext';
-import { Snackbar } from '@mui/material';
-
-
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
-const defaultTheme = createTheme();
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Video } from 'lucide-react'
+import { useContext } from 'react'
+import { AuthContext } from '../contexts/AuthContext'
+import '../styles/authstyle.css'
 
 export default function Authentication() {
+    const [tab, setTab] = useState('login')
+    const [name, setName] = useState('')
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+    const [message, setMessage] = useState('')
 
-    
+    const { handleLogin, handleRegister } = useContext(AuthContext)
+    const router = useNavigate()
 
-    const [username, setUsername] = React.useState();
-    const [password, setPassword] = React.useState();
-    const [name, setName] = React.useState();
-    const [error, setError] = React.useState();
-    const [message, setMessage] = React.useState();
-
-
-    const [formState, setFormState] = React.useState(0);
-
-    const [open, setOpen] = React.useState(false)
-
-
-    const { handleRegister, handleLogin } = React.useContext(AuthContext);
-
-    let handleAuth = async () => {
+    const handleLoginSubmit = async () => {
+        setError('')
         try {
-            if (formState === 0) {
-
-                let result = await handleLogin(username, password)
-
-
-            }
-            if (formState === 1) {
-                let result = await handleRegister(name, username, password);
-                console.log(result);
-                setUsername("");
-                setMessage(result);
-                setOpen(true);
-                setError("")
-                setFormState(0)
-                setPassword("")
-            }
+            await handleLogin(username, password)
         } catch (err) {
-
-            console.log(err);
-            let message = (err.response.data.message);
-            setError(message);
+            setError(err?.response?.data?.message || 'Login failed. Check your credentials.')
         }
     }
 
+    const handleRegisterSubmit = async () => {
+        setError('')
+        setMessage('')
+        try {
+            const msg = await handleRegister(name, username, password)
+            setMessage(msg)
+            setTab('login')
+        } catch (err) {
+            setError(err?.response?.data?.message || 'Registration failed. Try again.')
+        }
+    }
 
     return (
-        <div className="authlandingPage">
-        <ThemeProvider theme={defaultTheme}>
-            <Grid container component="main" sx={{ height: '100vh' }}>
-                    <div>
-                        <div className="btn-for-sign">
-                            <Button className = "btn-signin"variant={formState === 0 ? "contained" : ""} onClick={() => { setFormState(0) }}>
-                                Sign In
-                            </Button>
-                            <Button  className = "btn-for-signup"variant={formState === 1 ? "contained" : ""} onClick={() => { setFormState(1) }}>
-                                Sign Up
-                            </Button>
-                        </div>
-                        <div className="auth-system">
-                        <Box className="inbodx" component="form" noValidate sx={{ mt: 1 }}>
-                            {formState === 1 ? <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="username"
-                                label="Full Name"
-                                name="username"
-                                value={name}
-                                autoFocus
-                                onChange={(e) => setName(e.target.value)}
-                            /> : <></>}
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="username"
-                                label="Username"
-                                name="username"
-                                value={username}
-                                autoFocus
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                            <TextField 
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
-                                value={password}
-                                type="password"
-                                onChange={(e) => setPassword(e.target.value)}
-                                id="password"
-                            />
-                            <p style={{ color: "red" }}>{error}</p>
-                            <Button className="btn-submit"
-                                type="button"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
-                                onClick={handleAuth}
-                            >
-                                {formState === 0 ? "Login " : "Register"}
-                            </Button>
-                        </Box>
+        <div className="auth-page">
+            <div className="auth-card">
+
+                {/* Logo */}
+                <div className="auth-logo">
+                    <div className="logo-icon">
+                        <Video size={18} />
                     </div>
+                    <span className="logo-text">StreamSync</span>
                 </div>
-            </Grid>
-            <Snackbar
 
-                open={open}
-                autoHideDuration={4000}
-                message={message}
-            />
+                {/* Tabs */}
+                <div className="auth-tabs">
+                    <button
+                        className={`auth-tab ${tab === 'login' ? 'active' : ''}`}
+                        onClick={() => { setTab('login'); setError(''); setMessage('') }}
+                    >
+                        Sign in
+                    </button>
+                    <button
+                        className={`auth-tab ${tab === 'register' ? 'active' : ''}`}
+                        onClick={() => { setTab('register'); setError(''); setMessage('') }}
+                    >
+                        Sign up
+                    </button>
+                </div>
 
-        </ThemeProvider>
+                {/* Feedback */}
+                {error && <p className="auth-error">{error}</p>}
+                {message && <p className="auth-success">{message}</p>}
+
+                {/* Login Form */}
+                {tab === 'login' && (
+                    <div className="auth-form">
+                        <p className="auth-title">Welcome back</p>
+                        <p className="auth-sub">Sign in to your account</p>
+
+                        <div className="auth-field">
+                            <label>Username</label>
+                            <input
+                                type="text"
+                                placeholder="your_username"
+                                value={username}
+                                onChange={e => setUsername(e.target.value)}
+                            />
+                        </div>
+                        <div className="auth-field">
+                            <label>Password</label>
+                            <input
+                                type="password"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && handleLoginSubmit()}
+                            />
+                        </div>
+
+                        <button className="auth-btn" onClick={handleLoginSubmit}>
+                            Sign in
+                        </button>
+
+                        <p className="auth-switch">
+                            Don't have an account?{' '}
+                            <span onClick={() => setTab('register')}>Register</span>
+                        </p>
+                    </div>
+                )}
+
+                {/* Register Form */}
+                {tab === 'register' && (
+                    <div className="auth-form">
+                        <p className="auth-title">Create account</p>
+                        <p className="auth-sub">Join StreamSync today</p>
+
+                        <div className="auth-field">
+                            <label>Name</label>
+                            <input
+                                type="text"
+                                placeholder="Alex Johnson"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                            />
+                        </div>
+                        <div className="auth-field">
+                            <label>Username</label>
+                            <input
+                                type="text"
+                                placeholder="alex_j"
+                                value={username}
+                                onChange={e => setUsername(e.target.value)}
+                            />
+                        </div>
+                        <div className="auth-field">
+                            <label>Password</label>
+                            <input
+                                type="password"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && handleRegisterSubmit()}
+                            />
+                        </div>
+
+                        <button className="auth-btn" onClick={handleRegisterSubmit}>
+                            Create account
+                        </button>
+
+                        <p className="auth-switch">
+                            Already have an account?{' '}
+                            <span onClick={() => setTab('login')}>Sign in</span>
+                        </p>
+                    </div>
+                )}
+
+            </div>
         </div>
-    );
+    )
 }

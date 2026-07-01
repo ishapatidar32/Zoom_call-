@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react'
 import withAuth from '../utils/withAuth'
 import { useNavigate } from 'react-router-dom'
-import "../App.css";
+import "../styles/homestyle.css"  
 import { Button, IconButton, TextField } from '@mui/material';
 import RestoreIcon from '@mui/icons-material/Restore';
 import { AuthContext } from '../contexts/AuthContext';
-
+import { Video } from 'lucide-react'
 function HomeComponent() {
 
 
@@ -24,8 +24,10 @@ function HomeComponent() {
 
             <div className="navBar">
 
-                <div style={{ display: "flex", alignItems: "center" }}>
-
+                <div className="nav-logo">
+                     <div className="logo-icon">
+                        <Video size={18} />
+                    </div>
                     <h2> StreamSync</h2>
                 </div>
 
@@ -53,8 +55,8 @@ function HomeComponent() {
 
             <div className="meetContainer">
                 <div className="leftPanel">
-                    <div>
-                        <h2>Providing Quality Video Call Just Like Quality Education</h2>
+                    <div> 
+                        <h2>Stay close to the people <br></br> <span style={{color : "#6366f1"}}>who matter most </span></h2>
 
                         <div style={{ display: 'flex', gap: "10px" }}>
 

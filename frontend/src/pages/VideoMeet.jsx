@@ -439,7 +439,7 @@ export default function VideoMeetComponent() {
         // this.setState({ message: "", sender: username })
     }
 
-    
+
     let connect = () => {
         setAskForUsername(false);
         getMedia();
@@ -451,16 +451,91 @@ export default function VideoMeetComponent() {
 
             {askForUsername === true ?
 
-                <div>
+                <div style={{
+                    minHeight: "100vh",
+                    background: "linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "2rem"
+                }}>
 
+                    <h2 style={{
+                        fontSize: "1.75rem",
+                        fontWeight: "700",
+                        color: "#f1f5f9",
+                        marginBottom: "1.5rem"
+                    }}>
+                        Enter into Lobby
+                    </h2>
 
-                    <h2>Enter into Lobby </h2>
-                    <TextField id="outlined-basic" label="Username" value={username} onChange={e => setUsername(e.target.value)} variant="outlined" />
-                    <Button variant="contained" onClick={connect}>Connect</Button>
+                    <div style={{
+                        display: "flex",
+                        gap: "12px",
+                        alignItems: "center",
+                        marginBottom: "2rem"
+                    }}>
+                        <TextField
+                            id="outlined-basic"
+                            label="Username"
+                            value={username}
+                            onChange={e => setUsername(e.target.value)}
+                            variant="outlined"
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    background: "#1e293b",
+                                    borderRadius: "8px",
+                                    color: "#f1f5f9",
+                                    "& fieldset": { borderColor: "#334155" },
+                                    "&:hover fieldset": { borderColor: "#6366f1" },
+                                    "&.Mui-focused fieldset": { borderColor: "#6366f1" },
+                                },
+                                "& .MuiInputLabel-root": { color: "#94a3b8" },
+                                "& .MuiInputLabel-root.Mui-focused": { color: "#818cf8" },
+                            }}
+                        />
 
+                        <Button
+                            variant="contained"
+                            onClick={connect}
+                            sx={{
+                                background: "linear-gradient(90deg, #6366f1, #06b6d4)",
+                                borderRadius: "8px",
+                                textTransform: "none",
+                                fontWeight: "600",
+                                fontSize: "0.9rem",
+                                padding: "10px 24px",
+                                boxShadow: "none",
+                                "&:hover": {
+                                    opacity: 0.9,
+                                    boxShadow: "0 4px 20px rgba(99,102,241,0.35)",
+                                    background: "linear-gradient(90deg, #6366f1, #06b6d4)",
+                                }
+                            }}
+                        >
+                            Connect
+                        </Button>
+                    </div>
 
-                    <div>
-                        <video ref={localVideoref} autoPlay muted></video>
+                    <div style={{
+                        borderRadius: "16px",
+                        overflow: "hidden",
+                        border: "1px solid #334155",
+                        background: "#1e293b",
+                        width: "100%",
+                        maxWidth: "480px"
+                    }}>
+                        <video
+                            ref={localVideoref}
+                            autoPlay
+                            muted
+                            style={{
+                                width: "100%",
+                                height: "auto",
+                                display: "block",
+                            }}
+                        />
                     </div>
 
                 </div> :
@@ -504,7 +579,7 @@ export default function VideoMeetComponent() {
                             {(video === true) ? <VideocamIcon /> : <VideocamOffIcon />}
                         </IconButton>
                         <IconButton onClick={handleEndCall} style={{ color: "red" }}>
-                            <CallEndIcon  />
+                            <CallEndIcon />
                         </IconButton>
                         <IconButton onClick={handleAudio} style={{ color: "white" }}>
                             {audio === true ? <MicIcon /> : <MicOffIcon />}
