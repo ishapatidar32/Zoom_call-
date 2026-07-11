@@ -6,6 +6,7 @@ import { Button, IconButton, TextField } from '@mui/material';
 import RestoreIcon from '@mui/icons-material/Restore';
 import { AuthContext } from '../contexts/AuthContext';
 import { Video } from 'lucide-react'
+import { generateMeetingCode } from '../utils/meetcode';
 function HomeComponent() {
 
 
@@ -15,8 +16,15 @@ function HomeComponent() {
 
     const {addToUserHistory} = useContext(AuthContext);
     let handleJoinVideoCall = async () => {
+         if (!meetingCode.trim()) return;
         await addToUserHistory(meetingCode)
         navigate(`/${meetingCode}`)
+    }
+    
+     let handleStartMeeting = async () => {
+        const code = generateMeetingCode();
+        await addToUserHistory(code);
+        navigate(`/${code}`);
     }
 
     return (
@@ -58,16 +66,22 @@ function HomeComponent() {
                     <div> 
                         <h2>Stay close to the people <br></br> <span style={{color : "#6366f1"}}>who matter most </span></h2>
 
-                        <div style={{ display: 'flex', gap: "10px" }}>
+                        <div style={{ display: 'flex', gap: "10px", flexWrap: 'wrap', alignItems: 'center' }}>
 
                             <TextField onChange={e => setMeetingCode(e.target.value)} id="outlined-basic" label="Meeting Code" variant="outlined" />
                             <Button onClick={handleJoinVideoCall} variant='contained'>Join</Button>
+                            <Button onClick={handleStartMeeting} variant='outlined' sx={{ borderColor: '#6366f1', color: '#6366f1' }}>
+                                Start Meeting
+                            </Button>
 
                         </div>
+                        <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: '0.75rem' }}>
+                            Start a new room instantly, or join with a code from someone else
+                        </p>
                     </div>
                 </div>
                 <div className='rightPanel'>
-                    <img srcSet='/logo3.png' alt="" />
+                    <img srcSet='/homepage.png' alt="" />
                 </div>
             </div>
         </>

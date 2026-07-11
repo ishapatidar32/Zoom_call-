@@ -1,11 +1,24 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Video } from 'lucide-react'
+import { TextField, Button } from '@mui/material'
+import { parseMeetingInput } from '../utils/meetlink'
 import '../App.css'
 
 export default function LandingPage() {
     const router = useNavigate()
     const [roomCode, setRoomCode] = useState('')
+    const [joinError, setJoinError] = useState('')
+
+    const handleJoinAsGuest = () => {
+        const code = parseMeetingInput(roomCode)
+        if (!code) {
+            setJoinError('Enter a valid meeting code or link')
+            return
+        }
+        setJoinError('')
+        router(`/${code}`)
+    }
 
     return (
         <div className='landingPageContainer'>
@@ -19,7 +32,6 @@ export default function LandingPage() {
                     <span className="logo-text">StreamSync</span>
                 </div>
                 <div className='navlist'>
-                    <p onClick={() => router("/aljk23")}>Join as Guest</p>
                     <p onClick={() => router("/auth")}>Register</p>
                     <button className='nav-btn-login' onClick={() => router("/auth")}>
                         Login
@@ -40,9 +52,45 @@ export default function LandingPage() {
                         <button className='cta-button' onClick={() => router("/auth")}>
                             Get Started
                         </button>
-                        <button className='cta-button-outline' onClick={() => router("/aljk23")}>
-                            Join as Guest
-                        </button>
+                    </div>
+
+                    <div id="guest-join" style={{
+                        marginTop: '2rem',
+                        padding: '1.5rem',
+                        borderRadius: '12px',
+                        background: 'rgba(30, 41, 59, 0.6)',
+                        border: '1px solid #334155',
+                        maxWidth: '480px'
+                    }}>
+                        <p style={{ color: '#94a3b8', marginBottom: '0.75rem', fontSize: '0.9rem' }}>
+                            Guests need a meeting link or code to join
+                        </p>
+                        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                            <TextField
+                                size="small"
+                                label="Meeting code or link"
+                                value={roomCode}
+                                onChange={(e) => {
+                                    setRoomCode(e.target.value)
+                                    setJoinError('')
+                                }}
+                                onKeyDown={(e) => e.key === 'Enter' && handleJoinAsGuest()}
+                                sx={{
+                                    flex: 1,
+                                    minWidth: '200px',
+                                    "& .MuiOutlinedInput-root": {
+                                        background: "#1e293b",
+                                        color: "#f1f5f9",
+                                        "& fieldset": { borderColor: "#334155" },
+                                    },
+                                    "& .MuiInputLabel-root": { color: "#94a3b8" },
+                                }}
+                            />
+                            <Button variant="contained" onClick={handleJoinAsGuest}>Join</Button>
+                        </div>
+                        {joinError && (
+                            <p style={{ color: '#ef4444', marginTop: '0.5rem', fontSize: '0.85rem' }}>{joinError}</p>
+                        )}
                     </div>
                 </div>
                 <div className="landing-image">
