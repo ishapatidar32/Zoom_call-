@@ -24,9 +24,31 @@ const server_url = server;
 var connections = {};
 
 const peerConfigConnections = {
-    "iceServers": [
-        { "urls": "stun:stun.l.google.com:19302" }
-    ]
+   iceServers: [
+      {
+        urls: "stun:stun.relay.metered.ca:80",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:80",
+        username: "75fc5e6173607011940de046",
+        credential: "1sfQTs3qToryGcWs",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:80?transport=tcp",
+        username: "75fc5e6173607011940de046",
+        credential: "1sfQTs3qToryGcWs",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:443",
+        username: "75fc5e6173607011940de046",
+        credential: "1sfQTs3qToryGcWs",
+      },
+      {
+        urls: "turns:global.relay.metered.ca:443?transport=tcp",
+        username: "75fc5e6173607011940de046",
+        credential: "1sfQTs3qToryGcWs",
+      },
+  ],
 }
 
 export default function VideoMeetComponent() {
@@ -77,10 +99,9 @@ export default function VideoMeetComponent() {
     // }
 
     useEffect(() => {
-        console.log("HELLO")
-        getPermissions();
-
-    })
+    console.log("HELLO")
+    getPermissions();
+    }, []);   
 
     let getDislayMedia = () => {
         if (screen) {
@@ -166,9 +187,9 @@ export default function VideoMeetComponent() {
 
         for (let id in connections) {
             if (id === socketIdRef.current) continue
-
-            connections[id].addStream(window.localStream)
-
+            window.localStream.getTracks().forEach(track => {
+                connections[id].addTrack(track, window.localStream);
+            });
             connections[id].createOffer().then((description) => {
                 console.log(description)
                 connections[id].setLocalDescription(description)
@@ -193,8 +214,9 @@ export default function VideoMeetComponent() {
             localVideoref.current.srcObject = window.localStream
 
             for (let id in connections) {
-                connections[id].addStream(window.localStream)
-
+                window.localStream.getTracks().forEach(track => {
+                    connections[id].addTrack(track, window.localStream);
+                });
                 connections[id].createOffer().then((description) => {
                     connections[id].setLocalDescription(description)
                         .then(() => {
@@ -218,12 +240,7 @@ export default function VideoMeetComponent() {
                 tracks.forEach(track => track.stop())
             } catch (e) { }
         }
-    }
-
-
-
-
-
+    }    
     let getDislayMediaSuccess = (stream) => {
         console.log("HERE")
         try {
@@ -275,13 +292,14 @@ export default function VideoMeetComponent() {
             }
         };
 
-        connections[peerId].onaddstream = (event) => {
+        connections[peerId].ontrack = (event) => {
+            const remoteStream = event.streams[0];
             let videoExists = videoRef.current.find(video => video.socketId === peerId);
 
             if (videoExists) {
                 setVideos(videos => {
                     const updatedVideos = videos.map(video =>
-                        video.socketId === peerId ? { ...video, stream: event.stream } : video
+                        video.socketId === peerId ? { ...video, stream: remoteStream } : video
                     );
                     videoRef.current = updatedVideos;
                     return updatedVideos;
@@ -289,7 +307,7 @@ export default function VideoMeetComponent() {
             } else {
                 let newVideo = {
                     socketId: peerId,
-                    stream: event.stream,
+                    stream: remoteStream,
                     autoplay: true,
                     playsinline: true
                 };
@@ -303,11 +321,15 @@ export default function VideoMeetComponent() {
         };
 
         if (window.localStream !== undefined && window.localStream !== null) {
-            connections[peerId].addStream(window.localStream);
+           window.localStream.getTracks().forEach(track => {
+            connections[peerId].addTrack(track, window.localStream);
+           });
         } else {
             let blackSilence = (...args) => new MediaStream([black(...args), silence()]);
             window.localStream = blackSilence();
-            connections[peerId].addStream(window.localStream);
+            window.localStream.getTracks().forEach(track => {
+            connections[peerId].addTrack(track, window.localStream);
+            });
         }
 
         return connections[peerId];
@@ -370,7 +392,9 @@ export default function VideoMeetComponent() {
                         if (id2 === socketIdRef.current) continue
 
                         try {
-                            connections[id2].addStream(window.localStream)
+                            window.localStream.getTracks().forEach(track => {
+                                connections[id2].addTrack(track, window.localStream);
+                            });
                         } catch (e) { }
 
                         connections[id2].createOffer().then((description) => {
